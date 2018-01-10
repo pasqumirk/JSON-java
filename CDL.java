@@ -22,7 +22,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/
+ */
 
 /**
  * This provides static methods to convert comma delimited text into a
@@ -41,7 +41,7 @@ SOFTWARE.
  * The names for the elements in the JSONObjects can be taken from the names
  * in the first row.
  * @author JSON.org
- * @version 2015-12-09
+ * @version 2016-05-01
  */
 public class CDL {
 
@@ -69,7 +69,15 @@ public class CDL {
             for (;;) {
                 c = x.next();
                 if (c == q) {
-                    break;
+                    //Handle escaped double-quote
+                    char nextC = x.next();
+                    if(nextC != '\"') {
+                        // if our quote was the end of the file, don't step
+                        if(nextC > 0) {
+                            x.back();
+                        }
+                        break;
+                    }
                 }
                 if (c == 0 || c == '\n' || c == '\r') {
                     throw x.syntaxError("Missing close quote '" + q + "'.");

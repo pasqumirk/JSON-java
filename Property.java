@@ -25,7 +25,6 @@ SOFTWARE.
 */
 
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -41,6 +40,8 @@ public class Property {
      * @throws JSONException
      */
     public static JSONObject toJSONObject(java.util.Properties properties) throws JSONException {
+        // can't use the new constructor for Android support
+        // JSONObject jo = new JSONObject(properties == null ? 0 : properties.size());
         JSONObject jo = new JSONObject();
         if (properties != null && !properties.isEmpty()) {
             Enumeration<?> enumProperties = properties.propertyNames();
@@ -61,10 +62,12 @@ public class Property {
     public static Properties toProperties(JSONObject jo)  throws JSONException {
         Properties  properties = new Properties();
         if (jo != null) {
-            Iterator<String> keys = jo.keys();
-            while (keys.hasNext()) {
-                String name = keys.next();
-                properties.put(name, jo.getString(name));
+        	// Don't use the new entrySet API to maintain Android support
+            for (final String key : jo.keySet()) {
+                Object value = jo.opt(key);
+                if (!JSONObject.NULL.equals(value)) {
+                    properties.put(key, value.toString());
+                }
             }
         }
         return properties;
