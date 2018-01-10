@@ -25,6 +25,7 @@ package org.json;
  */
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
@@ -80,9 +81,12 @@ import java.util.Map;
  * @author JSON.org
  * @version 2016-08/15
  */
-public class JSONArray implements Iterable<Object> {
-
-    /**
+public class JSONArray implements Iterable<Object>, Serializable {
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = 2914089313557555176L;
+	/**
      * The arrayList where the JSONArray's properties are kept.
      */
     private final ArrayList<Object> myArrayList;
