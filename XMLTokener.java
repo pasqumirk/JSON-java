@@ -24,6 +24,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import java.io.Reader;
+
 /**
  * The XMLTokener extends the JSONTokener to provide additional methods
  * for the parsing of XML texts.
@@ -46,6 +48,14 @@ public class XMLTokener extends JSONTokener {
        entity.put("lt",   XML.LT);
        entity.put("quot", XML.QUOT);
    }
+
+    /**
+     * Construct an XMLTokener from a Reader.
+     * @param r A source reader.
+     */
+    public XMLTokener(Reader r) {
+        super(r);
+    }
 
     /**
      * Construct an XMLTokener from a string.
@@ -125,7 +135,7 @@ public class XMLTokener extends JSONTokener {
      * @return  A Character or an entity String if the entity is not recognized.
      * @throws JSONException If missing ';' in XML entity.
      */
-    public Object nextEntity(char ampersand) throws JSONException {
+    public Object nextEntity(@SuppressWarnings("unused") char ampersand) throws JSONException {
         StringBuilder sb = new StringBuilder();
         for (;;) {
             char c = next();
@@ -142,7 +152,7 @@ public class XMLTokener extends JSONTokener {
     }
     
     /**
-     * Unescapes an XML entity encoding;
+     * Unescape an XML entity encoding;
      * @param e entity (only the actual entity value, not the preceding & or ending ;
      * @return
      */
@@ -222,6 +232,7 @@ public class XMLTokener extends JSONTokener {
                 }
                 switch (c) {
                 case 0:
+                    throw syntaxError("Unterminated string");
                 case '<':
                 case '>':
                 case '/':
