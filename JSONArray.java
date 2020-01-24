@@ -108,6 +108,11 @@ public class JSONArray implements Iterable<Object>, Serializable {
      */
     public JSONArray(JSONTokener x) throws JSONException {
         this();
+        set(x);
+    }
+    
+    private void set(JSONTokener x) throws JSONException {
+    	this.myArrayList.clear();
         if (x.nextClean() != '[') {
             throw x.syntaxError("A JSONArray text must start with '['");
         }
@@ -1501,5 +1506,16 @@ public class JSONArray implements Iterable<Object>, Serializable {
             }
         }
         return results;
+    }
+    
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    	out.writeObject(this.toString());
+    }
+    	 
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	String source = (String)in.readObject();
+    	JSONTokener tok = new JSONTokener(source);
+    	this.set(tok);
     }
 }

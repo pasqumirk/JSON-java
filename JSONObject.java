@@ -215,8 +215,14 @@ public class JSONObject implements Serializable {
      */
     public JSONObject(JSONTokener x) throws JSONException {
         this();
+        set(x);
+    }
+    
+    private void set(JSONTokener x) throws JSONException {
         char c;
         String key;
+        
+        this.map.clear();
 
         if (x.nextClean() != '{') {
             throw x.syntaxError("A JSONObject text must begin with '{'");
@@ -2442,5 +2448,25 @@ public class JSONObject implements Serializable {
             results.put(entry.getKey(), value);
         }
         return results;
+    }
+    
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    	out.writeObject(this.toString());
+    }
+    	 
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	Class<?> c = JSONObject.class;
+    	try {
+    		if (this.map == null) {
+    			Map<String, Object> newMap = new HashMap<String, Object>();
+    			Field mapField = c.getDeclaredField("map");
+    			mapField.setAccessible(true);
+    			mapField.set(this, newMap);
+    		}
+	    	String source = (String)in.readObject();
+	    	JSONTokener tok = new JSONTokener(source);
+	    	this.set(tok);
+    	} catch (Exception e) {
+		}
     }
 }
